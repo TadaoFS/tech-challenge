@@ -1,0 +1,17 @@
+services:
+  techchallange:
+    build: .
+    hostname: techchallange
+    container_name: techchallange
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: tech_challenge
+      POSTGRES_USER: tech
+      POSTGRES_PASSWORD: challange
