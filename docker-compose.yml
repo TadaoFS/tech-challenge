@@ -1,8 +1,8 @@
 services:
   techchallange:
     build: .
-    hostname: techchallange
-    container_name: techchallange
+    hostname: techchallenge
+    container_name: techchallenge
     ports:
       - "8080:8080"
     depends_on:
@@ -12,6 +12,6 @@ services:
     ports:
       - 5432:5432
     environment:
-      POSTGRES_DB: tech_challenge
+      POSTGRES_DB: tech_challegne
       POSTGRES_USER: tech
       POSTGRES_PASSWORD: challange
