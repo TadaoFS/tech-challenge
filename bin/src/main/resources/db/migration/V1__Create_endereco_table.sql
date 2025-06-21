@@ -8,6 +8,3 @@ CREATE TABLE Endereco (
                           data_criacao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                           data_atualizacao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
-
-
-
