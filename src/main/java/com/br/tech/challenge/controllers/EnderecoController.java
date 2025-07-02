@@ -1,4 +1,4 @@
-package com.br.tech.challenge.controller;
+package com.br.tech.challenge.controllers;
 
 import java.util.List;
 
