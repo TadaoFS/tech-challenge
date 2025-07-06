@@ -34,7 +34,6 @@ public class EnderecoService {
         return enderecoRepository.findById(id);
     }
 
-
     @Transactional
     public Endereco atualizarEndereco(Long id, Endereco enderecoAtualizado) {
         Optional<Endereco> existenteOpt = enderecoRepository.findById(id);
@@ -49,16 +48,16 @@ public class EnderecoService {
         existente.setNumero(enderecoAtualizado.getNumero());
         existente.setBairro(enderecoAtualizado.getBairro());
         existente.setCidade(enderecoAtualizado.getCidade());
-        
 
         return enderecoRepository.save(existente);
     }
 
     @Transactional
     public void deletarEndereco(Long id) {
-    	if (!enderecoRepository.existsById(id)) {
-    	    throw new RuntimeException("Endereço com ID " + id + " não encontrado");
-    	}
+        if (!enderecoRepository.existsById(id)) {
+            throw new RuntimeException("Endereço com ID " + id + " não encontrado");
+        }
         enderecoRepository.deleteById(id);
     }
+
 }

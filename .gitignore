@@ -33,3 +33,6 @@ build/
 .vscode/
 
 *.properties
+
+### Ignorando a usuário controller
+src/main/java/com/br/tech/challenge/controllers/UsuarioController.java

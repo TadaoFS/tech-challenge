@@ -34,21 +34,29 @@ public class EnderecoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Endereco> buscarPorId(@PathVariable Long id) {
-    Optional<Endereco> endereco = enderecoService.buscarEnderecoPorId(id);
-    return endereco
-            .map(ResponseEntity::ok)
-            .orElseGet(() -> ResponseEntity.notFound().build());
-}
+        Optional<Endereco> endereco = enderecoService.buscarEnderecoPorId(id);
+        return endereco
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Endereco> atualizarEndereco(@PathVariable Long id, @RequestBody Endereco enderecoAtualizado) {
-        Endereco atualizado = enderecoService.atualizarEndereco(id, enderecoAtualizado);
-        return ResponseEntity.ok(atualizado);
+    public ResponseEntity<Endereco> atualizarEndereco(@PathVariable Long id, @RequestBody Endereco endereco) {
+        try {
+            Endereco atualizado = enderecoService.atualizarEndereco(id, endereco);
+            return ResponseEntity.ok(atualizado);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarEndereco(@PathVariable Long id) {
-        enderecoService.deletarEndereco(id);
-        return ResponseEntity.noContent().build();
+        try {
+            enderecoService.deletarEndereco(id);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 }
