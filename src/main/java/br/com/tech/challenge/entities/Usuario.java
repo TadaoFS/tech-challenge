@@ -1,4 +1,4 @@
-package com.br.tech.challenge.entities;
+package br.com.tech.challenge.entities;
 
 import jakarta.persistence.*;
 import lombok.*;

@@ -1,5 +1,5 @@
 services:
-  techchallange:
+  techchallenge:
     build: .
     hostname: techchallenge
     container_name: techchallenge
@@ -9,9 +9,10 @@ services:
       - postgres
   postgres:
     image: postgres:latest
+    container_name: postgres
     ports:
       - 5432:5432
     environment:
-      POSTGRES_DB: tech_challegne
+      POSTGRES_DB: techchallange
       POSTGRES_USER: tech
       POSTGRES_PASSWORD: challange

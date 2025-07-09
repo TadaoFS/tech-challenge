@@ -1,8 +1,7 @@
-package com.br.tech.challenge.controllers;
+package br.com.tech.challenge.controllers;
 
-import com.br.tech.challenge.entities.Endereco;
-import com.br.tech.challenge.services.EnderecoService;
-
+import br.com.tech.challenge.entities.Endereco;
+import br.com.tech.challenge.services.EnderecoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

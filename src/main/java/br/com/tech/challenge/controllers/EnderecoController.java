@@ -1,14 +1,15 @@
-package com.br.tech.challenge.controllers;
+package br.com.tech.challenge.controllers;
 
 import java.util.List;
 
 import java.util.Optional;
+
+import br.com.tech.challenge.entities.Endereco;
+import br.com.tech.challenge.services.EnderecoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.br.tech.challenge.entities.Endereco;
-import com.br.tech.challenge.services.EnderecoService;
 
 @RestController
 @RequestMapping("/endereco")

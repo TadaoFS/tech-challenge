@@ -1,7 +1,8 @@
-package com.br.tech.challenge.services;
+package br.com.tech.challenge.services;
 
-import com.br.tech.challenge.entities.Endereco;
-import com.br.tech.challenge.repositories.EnderecoRepository;
+
+import br.com.tech.challenge.entities.Endereco;
+import br.com.tech.challenge.repositories.EnderecoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;

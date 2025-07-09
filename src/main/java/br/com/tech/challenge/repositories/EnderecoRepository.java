@@ -1,8 +1,8 @@
-package com.br.tech.challenge.repositories;
+package br.com.tech.challenge.repositories;
 
+import br.com.tech.challenge.entities.Endereco;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.br.tech.challenge.entities.Endereco;
 
 public interface EnderecoRepository extends JpaRepository<Endereco, Long>{
 

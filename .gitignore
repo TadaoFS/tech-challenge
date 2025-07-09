@@ -35,4 +35,4 @@ build/
 *.properties
 
 ### Ignorando a usuário controller
-src/main/java/com/br/tech/challenge/controllers/UsuarioController.java
+src/main/java/br/com/tech/challenge/controllers/UsuarioController.java
