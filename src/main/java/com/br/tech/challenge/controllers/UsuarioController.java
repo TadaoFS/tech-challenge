@@ -2,6 +2,7 @@ package com.br.tech.challenge.controllers;
 
 import com.br.tech.challenge.entities.Usuario;
 import com.br.tech.challenge.services.UsuarioService;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -22,6 +23,7 @@ public class UsuarioController {
     }
 
     @PostMapping(produces = "application/json")
+    @ResponseStatus(HttpStatus.CREATED)
     public String postUsuario(@RequestBody Usuario usuario){
         return this.usuarioService.inserirUsuario(usuario);
     }
@@ -29,6 +31,11 @@ public class UsuarioController {
     @PutMapping(value = "/{id}", produces = "application/json")
     public String putUsuario(@PathVariable long id, @RequestBody Usuario usuario){
         return this.usuarioService.editarUsuario(id, usuario);
+    }
+
+    @PatchMapping(value = "/{id}/senha", produces = "application/json")
+    public String patchUsuarioSenha(@PathVariable long id, @RequestBody String novaSenha) {
+        return this.usuarioService.alterarSenha(id, novaSenha);
     }
 
     @DeleteMapping(value = "/{id}", produces = "application/json")
