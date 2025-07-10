@@ -23,7 +23,6 @@ public class UsuarioController {
     }
 
     @PostMapping(produces = "application/json")
-    @ResponseStatus(HttpStatus.CREATED)
     public String postUsuario(@RequestBody Usuario usuario){
         return this.usuarioService.inserirUsuario(usuario);
     }
