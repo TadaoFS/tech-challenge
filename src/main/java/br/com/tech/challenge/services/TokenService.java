@@ -5,6 +5,7 @@ import br.com.tech.challenge.entities.Usuario;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -57,5 +58,20 @@ public class TokenService {
         } catch (Exception e) {
             return Boolean.FALSE;
         }
+    }
+
+    private Boolean tokenExpirado(String token) {
+        Date expiration = Jwts.parser()
+                .verifyWith(Keys.hmacShaKeyFor(Base64.getDecoder().decode(jwtKey)))
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getExpiration();
+        return expiration.before(Date.from(Instant.now()));
+    }
+
+    public Boolean validarToken(String token, UserDetails userDetails) {
+        final String login = extrairLogin(token);
+        return (login.equals(userDetails.getUsername()) && !tokenExpirado(token));
     }
 }

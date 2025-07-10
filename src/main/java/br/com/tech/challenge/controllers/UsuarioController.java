@@ -3,6 +3,7 @@ package br.com.tech.challenge.controllers;
 import br.com.tech.challenge.entities.Usuario;
 import br.com.tech.challenge.services.UsuarioService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,6 +16,7 @@ public class UsuarioController {
         this.usuarioService = usuarioService;
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping(value = "/{id}", produces = "application/json")
     public Usuario getUsuario(@PathVariable long id){
         return this.usuarioService.buscarUsuario(id);
