@@ -1,35 +1,60 @@
 package br.com.tech.challenge.controllers;
 
+import br.com.tech.challenge.config.JwtFilter;
 import br.com.tech.challenge.entities.Endereco;
 import br.com.tech.challenge.services.EnderecoService;
+import br.com.tech.challenge.services.TokenService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(EnderecoController.class)
+@WebMvcTest(
+        controllers = EnderecoController.class,
+        excludeAutoConfiguration = SecurityAutoConfiguration.class,
+        excludeFilters = @ComponentScan.Filter(
+                type = FilterType.ASSIGNABLE_TYPE,
+                classes = { TokenService.class, JwtFilter.class }
+        )
+)
+@AutoConfigureMockMvc(addFilters = false)
 class EnderecoControllerTest {
 
         @Autowired
         private MockMvc mockMvc;
 
-        @MockBean
+        @MockitoBean
         private EnderecoService enderecoService;
+
+      // @Configuration
+      // static class TestSecurityConfig {
+      //         @Bean
+      //         @Primary
+      //         public SecurityFilterChain mockSecurityFilterChain() {
+      //                 return mock(SecurityFilterChain.class);
+      //         }
+      // }
 
         private Endereco endereco;
 
@@ -47,18 +72,20 @@ class EnderecoControllerTest {
 
         @Test
         void listarTodos_sucesso() throws Exception {
-                Mockito.when(enderecoService.listarEnderecos())
-                                .thenReturn(Arrays.asList(endereco));
+                when(enderecoService.listarEnderecos())
+                                .thenReturn(Collections.singletonList(endereco));
 
                 mockMvc.perform(get("/endereco"))
+                        .andDo(print())
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$", hasSize(1)))
-                                .andExpect(jsonPath("$[0].cep").value("12345678"));
+                                .andExpect(jsonPath("$[0].cep").value("12345678"))
+                                .andExpect(jsonPath("$[0].logradouro").value("Rua Teste"));
         }
 
         @Test
         void buscarPorId_sucesso() throws Exception {
-                Mockito.when(enderecoService.buscarEnderecoPorId(1L))
+                when(enderecoService.buscarEnderecoPorId(1L))
                                 .thenReturn(Optional.of(endereco));
 
                 mockMvc.perform(get("/endereco/1"))
@@ -68,7 +95,7 @@ class EnderecoControllerTest {
 
         @Test
         void buscarPorId_naoEncontrado() throws Exception {
-                Mockito.when(enderecoService.buscarEnderecoPorId(999L))
+                when(enderecoService.buscarEnderecoPorId(999L))
                                 .thenReturn(Optional.empty());
 
                 mockMvc.perform(get("/endereco/999"))
@@ -76,9 +103,8 @@ class EnderecoControllerTest {
         }
 
         @Test
-        @WithMockUser(username = "admin", roles = {"ADMIN"})
         void criarEndereco_sucesso() throws Exception {
-                Mockito.when(enderecoService.salvarEndereco(any(Endereco.class)))
+                when(enderecoService.salvarEndereco(any(Endereco.class)))
                                 .thenReturn(endereco);
 
                 String json = """
@@ -100,7 +126,6 @@ class EnderecoControllerTest {
         }
 
         @Test
-        @WithMockUser(username = "admin", roles = {"ADMIN"})
         void atualizarEndereco_sucesso() throws Exception {
                 Endereco enderecoAtualizado = new Endereco();
                 enderecoAtualizado.setId(1L);
@@ -111,7 +136,7 @@ class EnderecoControllerTest {
                 enderecoAtualizado.setCidade("Cidade");
                 enderecoAtualizado.setEstado("UF");
 
-                Mockito.when(enderecoService.atualizarEndereco(eq(1L), any(Endereco.class)))
+                when(enderecoService.atualizarEndereco(eq(1L), any(Endereco.class)))
                                 .thenReturn(enderecoAtualizado);
 
                 String json = """
@@ -134,9 +159,8 @@ class EnderecoControllerTest {
         }
 
         @Test
-        @WithMockUser(username = "admin", roles = {"ADMIN"})
         void atualizarEndereco_naoEncontrado() throws Exception {
-                Mockito.when(enderecoService.atualizarEndereco(eq(999L), any(Endereco.class)))
+                when(enderecoService.atualizarEndereco(eq(999L), any(Endereco.class)))
                                 .thenThrow(new RuntimeException("Endereço não encontrado"));
 
                 String json = """
@@ -157,7 +181,6 @@ class EnderecoControllerTest {
         }
 
         @Test
-        @WithMockUser(username = "admin", roles = {"ADMIN"})
         void deletarEndereco_sucesso() throws Exception {
                 Mockito.doNothing().when(enderecoService).deletarEndereco(1L);
 
@@ -166,7 +189,6 @@ class EnderecoControllerTest {
         }
 
         @Test
-        @WithMockUser(username = "admin", roles = {"ADMIN"})
         void deletarEndereco_naoEncontrado() throws Exception {
                 Mockito.doThrow(new RuntimeException("Endereço não encontrado"))
                                 .when(enderecoService).deletarEndereco(999L);
