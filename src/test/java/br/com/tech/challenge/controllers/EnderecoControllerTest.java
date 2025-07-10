@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
@@ -46,15 +45,6 @@ class EnderecoControllerTest {
 
         @MockitoBean
         private EnderecoService enderecoService;
-
-      // @Configuration
-      // static class TestSecurityConfig {
-      //         @Bean
-      //         @Primary
-      //         public SecurityFilterChain mockSecurityFilterChain() {
-      //                 return mock(SecurityFilterChain.class);
-      //         }
-      // }
 
         private Endereco endereco;
 

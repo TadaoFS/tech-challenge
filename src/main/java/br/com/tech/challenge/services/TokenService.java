@@ -2,8 +2,10 @@ package br.com.tech.challenge.services;
 
 import br.com.tech.challenge.entities.Perfil;
 import br.com.tech.challenge.entities.Usuario;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -71,7 +73,11 @@ public class TokenService {
     }
 
     public Boolean validarToken(String token, UserDetails userDetails) {
-        final String login = extrairLogin(token);
-        return (login.equals(userDetails.getUsername()) && !tokenExpirado(token));
+        try {
+            final String login = extrairLogin(token);
+            return (login.equals(userDetails.getUsername()) && !tokenExpirado(token));
+        } catch (SignatureException | ExpiredJwtException ex) {
+            return Boolean.FALSE;
+        }
     }
 }

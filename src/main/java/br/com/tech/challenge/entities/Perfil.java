@@ -10,6 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @Entity
 @Table(name="perfil")
+@Builder
 public class Perfil {
 
     @Id

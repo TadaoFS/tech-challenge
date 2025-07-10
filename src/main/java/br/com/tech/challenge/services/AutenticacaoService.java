@@ -33,6 +33,10 @@ public class AutenticacaoService {
                     log.error("[AutenticacaoService] - Perfil não encontrado para usuário: {}", usuario.getLogin());
                     return new RuntimeException("Perfil não encontrado");
                 });
+        if(!usuario.getSenha().equals(request.senha())) {
+            log.error("[AutenticacaoService] - Senha incorreta para usuário: {}", request.login());
+            throw new RuntimeException("Senha incorreta");
+        }
         var token = tokenService.gerarToken(usuario, perfil);
         return new LoginResponse(token, TOKEN_TYPE);
     }
