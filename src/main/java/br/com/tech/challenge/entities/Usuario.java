@@ -23,7 +23,7 @@ public class Usuario {
 
     String senha;
 
-    String dataAlteracao;
+    String dataAtualizacao;
 
     @OneToOne(cascade = CascadeType.ALL)
     Endereco endereco;

@@ -8,11 +8,11 @@ services:
     depends_on:
       - postgres
   postgres:
-    image: postgres:latest
+    image: postgres:17.5
     container_name: postgres
     ports:
       - 5432:5432
     environment:
-      POSTGRES_DB: techchallange
+      POSTGRES_DB: techchallenge
       POSTGRES_USER: tech
-      POSTGRES_PASSWORD: challange
+      POSTGRES_PASSWORD: challenge

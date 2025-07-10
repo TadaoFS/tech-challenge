@@ -33,7 +33,6 @@ public class UsuarioService {
         usr.setLogin(usuario.getLogin());
         usr.setEmail(usuario.getEmail());
         usr.setSenha(usuario.getSenha());
-        usr.setDataAlteracao(usuario.getDataAlteracao());
         usr.setEndereco(usuario.getEndereco());
         usuarioRepository.save(usr);
         return String.format("Usuário %s alterado com sucesso!", usuario.getEmail());
