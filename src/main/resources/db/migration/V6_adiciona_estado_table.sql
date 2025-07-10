@@ -1,2 +1,0 @@
-ALTER TABLE endereco
-ADD COLUMN estado VARCHAR(50);
