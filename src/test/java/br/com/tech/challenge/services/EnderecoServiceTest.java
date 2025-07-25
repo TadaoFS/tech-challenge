@@ -38,7 +38,7 @@ class EnderecoServiceTest {
     }
 
     @Test
-    void salvarEndereco_sucesso() {
+    void salvarEnderecoSucesso() {
         when(enderecoRepository.save(any(Endereco.class))).thenReturn(endereco);
 
         Endereco salvo = enderecoService.salvarEndereco(endereco);
@@ -49,7 +49,7 @@ class EnderecoServiceTest {
     }
 
     @Test
-    void listarEnderecos_sucesso() {
+    void listarEnderecosSucesso() {
         when(enderecoRepository.findAll()).thenReturn(List.of(endereco));
 
         List<Endereco> lista = enderecoService.listarEnderecos();
@@ -60,7 +60,7 @@ class EnderecoServiceTest {
     }
 
     @Test
-    void buscarEnderecoPorId_sucesso() {
+    void buscarEnderecoPorIdSucesso() {
         when(enderecoRepository.findById(1L)).thenReturn(Optional.of(endereco));
 
         Optional<Endereco> resultado = enderecoService.buscarEnderecoPorId(1L);
@@ -71,7 +71,7 @@ class EnderecoServiceTest {
     }
 
     @Test
-    void buscarEnderecoPorId_naoEncontrado() {
+    void buscarEnderecoPorIdNaoEncontrado() {
         when(enderecoRepository.findById(999L)).thenReturn(Optional.empty());
 
         Optional<Endereco> resultado = enderecoService.buscarEnderecoPorId(999L);
@@ -81,7 +81,7 @@ class EnderecoServiceTest {
     }
 
     @Test
-    void atualizarEndereco_sucesso() {
+    void atualizarEnderecoSucesso() {
         Endereco enderecoAtualizado = new Endereco();
         enderecoAtualizado.setCep("87654321");
         enderecoAtualizado.setLogradouro("Rua Atualizada");
@@ -103,7 +103,7 @@ class EnderecoServiceTest {
     }
 
     @Test
-    void atualizarEndereco_naoEncontrado() {
+    void atualizarEnderecoNaoEncontrado() {
         when(enderecoRepository.findById(999L)).thenReturn(Optional.empty());
 
         Endereco enderecoAtualizado = new Endereco();
@@ -119,7 +119,7 @@ class EnderecoServiceTest {
     }
 
     @Test
-    void deletarEndereco_sucesso() {
+    void deletarEnderecoSucesso() {
         when(enderecoRepository.existsById(1L)).thenReturn(true);
         doNothing().when(enderecoRepository).deleteById(1L);
 
@@ -130,7 +130,7 @@ class EnderecoServiceTest {
     }
 
     @Test
-    void deletarEndereco_naoEncontrado() {
+    void deletarEnderecoNaoEncontrado() {
         when(enderecoRepository.existsById(999L)).thenReturn(false);
 
         Exception exception = assertThrows(RuntimeException.class, () -> {

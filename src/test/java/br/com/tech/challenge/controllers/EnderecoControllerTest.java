@@ -61,7 +61,7 @@ class EnderecoControllerTest {
         }
 
         @Test
-        void listarTodos_sucesso() throws Exception {
+        void listarTodosSucesso() throws Exception {
                 when(enderecoService.listarEnderecos())
                                 .thenReturn(Collections.singletonList(endereco));
 
@@ -74,7 +74,7 @@ class EnderecoControllerTest {
         }
 
         @Test
-        void buscarPorId_sucesso() throws Exception {
+        void buscarPorIdSucesso() throws Exception {
                 when(enderecoService.buscarEnderecoPorId(1L))
                                 .thenReturn(Optional.of(endereco));
 
@@ -84,7 +84,7 @@ class EnderecoControllerTest {
         }
 
         @Test
-        void buscarPorId_naoEncontrado() throws Exception {
+        void buscarPorIdNaoEncontrado() throws Exception {
                 when(enderecoService.buscarEnderecoPorId(999L))
                                 .thenReturn(Optional.empty());
 
@@ -93,7 +93,7 @@ class EnderecoControllerTest {
         }
 
         @Test
-        void criarEndereco_sucesso() throws Exception {
+        void criarEnderecoSucesso() throws Exception {
                 when(enderecoService.salvarEndereco(any(Endereco.class)))
                                 .thenReturn(endereco);
 
@@ -116,7 +116,7 @@ class EnderecoControllerTest {
         }
 
         @Test
-        void atualizarEndereco_sucesso() throws Exception {
+        void atualizarEnderecoSucesso() throws Exception {
                 Endereco enderecoAtualizado = new Endereco();
                 enderecoAtualizado.setId(1L);
                 enderecoAtualizado.setCep("87654321");
@@ -149,7 +149,7 @@ class EnderecoControllerTest {
         }
 
         @Test
-        void atualizarEndereco_naoEncontrado() throws Exception {
+        void atualizarEnderecoNaoEncontrado() throws Exception {
                 when(enderecoService.atualizarEndereco(eq(999L), any(Endereco.class)))
                                 .thenThrow(new RuntimeException("Endereço não encontrado"));
 
@@ -171,7 +171,7 @@ class EnderecoControllerTest {
         }
 
         @Test
-        void deletarEndereco_sucesso() throws Exception {
+        void deletarEnderecoSucesso() throws Exception {
                 Mockito.doNothing().when(enderecoService).deletarEndereco(1L);
 
                 mockMvc.perform(delete("/endereco/1"))
@@ -179,7 +179,7 @@ class EnderecoControllerTest {
         }
 
         @Test
-        void deletarEndereco_naoEncontrado() throws Exception {
+        void deletarEnderecoNaoEncontrado() throws Exception {
                 Mockito.doThrow(new RuntimeException("Endereço não encontrado"))
                                 .when(enderecoService).deletarEndereco(999L);
 
