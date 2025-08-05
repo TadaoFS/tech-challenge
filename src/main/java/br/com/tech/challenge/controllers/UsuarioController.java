@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/v1/usuarios")
 public class UsuarioController {
@@ -17,6 +19,11 @@ public class UsuarioController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping
+    public List<Usuario> getUsuario(){
+        return this.usuarioService.buscarUsuarios();
+    }
+
     @GetMapping(value = "/{id}", produces = "application/json")
     public Usuario getUsuario(@PathVariable long id){
         return this.usuarioService.buscarUsuario(id);
