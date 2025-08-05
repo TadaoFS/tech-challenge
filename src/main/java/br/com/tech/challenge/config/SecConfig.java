@@ -3,6 +3,7 @@ package br.com.tech.challenge.config;
 import br.com.tech.challenge.services.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -37,6 +38,8 @@ public class SecConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/v1/auth/**").permitAll()
                         .requestMatchers("/v1/usuarios/{id}/senha").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/v1/usuarios").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/v1/endereco").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
