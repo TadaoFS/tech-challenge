@@ -9,11 +9,7 @@ import java.util.List;
 
 
 @RestController
-<<<<<<< HEAD
-@RequestMapping("/v1/endereco")
-=======
 @RequestMapping("/v1/enderecos")
->>>>>>> b233cca (adicionando usuario na entidade endereco)
 public class EnderecoController {
 
     private final EnderecoService enderecoService;
