@@ -10,6 +10,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/v1/enderecos")
+
+@RequestMapping("/v1/endereco") 
 public class EnderecoController {
 
     private final EnderecoService enderecoService;

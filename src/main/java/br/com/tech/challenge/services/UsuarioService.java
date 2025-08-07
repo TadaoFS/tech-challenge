@@ -6,6 +6,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UsuarioService {
 
@@ -56,5 +58,9 @@ public class UsuarioService {
         usuario.setSenha(novaSenha);
         usuarioRepository.save(usuario);
         return "Senha alterada com sucesso!";
+    }
+
+    public List<Usuario> buscarUsuarios() {
+        return usuarioRepository.findAll();
     }
 }

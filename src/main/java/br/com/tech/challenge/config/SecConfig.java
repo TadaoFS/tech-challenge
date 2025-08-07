@@ -38,6 +38,8 @@ public class SecConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/v1/auth/**").permitAll()
                         .requestMatchers("/v1/usuarios/{id}/senha").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/v1/usuarios").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/v1/endereco").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
