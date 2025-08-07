@@ -1,5 +1,7 @@
 package br.com.tech.challenge.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,6 +29,7 @@ public class Usuario {
     String dataAtualizacao;
 
     @OneToOne(cascade = CascadeType.ALL)
+    @JsonManagedReference
     Endereco endereco;
 
 }

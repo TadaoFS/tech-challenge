@@ -1,9 +1,13 @@
 package br.com.tech.challenge.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,4 +37,9 @@ public class Endereco {
 
     private String estado;
 
+    @OneToOne
+    @JoinColumn(name = "usuario_id", referencedColumnName = "id")
+    @JsonBackReference
+    private Usuario usuario;
+   
 }
