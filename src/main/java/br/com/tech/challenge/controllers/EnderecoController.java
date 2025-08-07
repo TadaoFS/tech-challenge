@@ -1,18 +1,15 @@
 package br.com.tech.challenge.controllers;
 
-import java.util.List;
-
-import java.util.Optional;
-
 import br.com.tech.challenge.entities.Endereco;
 import br.com.tech.challenge.services.EnderecoService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
-@RequestMapping("/endereco")
+@RequestMapping("/v1/enderecos")
 public class EnderecoController {
 
     private final EnderecoService enderecoService;
@@ -23,41 +20,30 @@ public class EnderecoController {
 
     @PostMapping
     public ResponseEntity<Endereco> criarEndereco(@RequestBody Endereco endereco) {
-        Endereco salvo = enderecoService.salvarEndereco(endereco);
-        return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
-    }
+    Endereco enderecoSalvo = enderecoService.salvarEndereco(endereco);
+    return ResponseEntity.status(201).body(enderecoSalvo);
+}
 
     @GetMapping
-    public ResponseEntity<List<Endereco>> listarTodos() {
-        List<Endereco> enderecos = enderecoService.listarEnderecos();
-        return ResponseEntity.ok(enderecos);
+    public ResponseEntity<List<Endereco>> listarEnderecos() {
+        return ResponseEntity.ok(enderecoService.listarEnderecos());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Endereco> buscarPorId(@PathVariable Long id) {
-        Optional<Endereco> endereco = enderecoService.buscarEnderecoPorId(id);
-        return endereco
+    public ResponseEntity<Endereco> buscarEnderecoPorId(@PathVariable Long id) {
+        return enderecoService.buscarEnderecoPorId(id)
                 .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Endereco> atualizarEndereco(@PathVariable Long id, @RequestBody Endereco endereco) {
-        try {
-            Endereco atualizado = enderecoService.atualizarEndereco(id, endereco);
-            return ResponseEntity.ok(atualizado);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+        return ResponseEntity.ok(enderecoService.atualizarEndereco(id, endereco));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarEndereco(@PathVariable Long id) {
-        try {
-            enderecoService.deletarEndereco(id);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+        enderecoService.deletarEndereco(id);
+        return ResponseEntity.noContent().build();
     }
 }

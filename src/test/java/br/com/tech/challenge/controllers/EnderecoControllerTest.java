@@ -11,10 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
@@ -32,158 +32,162 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(
         controllers = EnderecoController.class,
         excludeAutoConfiguration = SecurityAutoConfiguration.class,
-        excludeFilters = @ComponentScan.Filter(
-                type = FilterType.ASSIGNABLE_TYPE,
-                classes = { TokenService.class, JwtFilter.class }
-        )
+        excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtFilter.class)
 )
 @AutoConfigureMockMvc(addFilters = false)
 class EnderecoControllerTest {
 
-        @Autowired
-        private MockMvc mockMvc;
+    @Autowired
+    private MockMvc mockMvc;
 
-        @MockitoBean
-        private EnderecoService enderecoService;
+    @MockBean
+    private EnderecoService enderecoService;
 
-        private Endereco endereco;
+    // Mock dos beans de segurança que causavam problema
+    @MockBean
+    private TokenService tokenService;
 
-        @BeforeEach
-        void setUp() {
-                endereco = new Endereco();
-                endereco.setId(1L);
-                endereco.setCep("12345678");
-                endereco.setLogradouro("Rua Teste");
-                endereco.setNumero("100");
-                endereco.setBairro("Centro");
-                endereco.setCidade("Cidade");
-                endereco.setEstado("UF");
-        }
+    @MockBean
+    private JwtFilter jwtFilter;
 
-        @Test
-        void listarTodosSucesso() throws Exception {
-                when(enderecoService.listarEnderecos())
-                                .thenReturn(Collections.singletonList(endereco));
+    private Endereco endereco;
 
-                mockMvc.perform(get("/endereco"))
-                        .andDo(print())
-                                .andExpect(status().isOk())
-                                .andExpect(jsonPath("$", hasSize(1)))
-                                .andExpect(jsonPath("$[0].cep").value("12345678"))
-                                .andExpect(jsonPath("$[0].logradouro").value("Rua Teste"));
-        }
+    @BeforeEach
+    void setUp() {
+        endereco = new Endereco();
+        endereco.setId(1L);
+        endereco.setCep("12345678");
+        endereco.setLogradouro("Rua Teste");
+        endereco.setNumero("100");
+        endereco.setBairro("Centro");
+        endereco.setCidade("Cidade");
+        endereco.setEstado("UF");
+    }
 
-        @Test
-        void buscarPorIdSucesso() throws Exception {
-                when(enderecoService.buscarEnderecoPorId(1L))
-                                .thenReturn(Optional.of(endereco));
+    @Test
+    void listarTodosSucesso() throws Exception {
+        when(enderecoService.listarEnderecos())
+                .thenReturn(Collections.singletonList(endereco));
 
-                mockMvc.perform(get("/endereco/1"))
-                                .andExpect(status().isOk())
-                                .andExpect(jsonPath("$.cep").value("12345678"));
-        }
+        mockMvc.perform(get("/v1/enderecos"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].cep").value("12345678"))
+                .andExpect(jsonPath("$[0].logradouro").value("Rua Teste"));
+    }
 
-        @Test
-        void buscarPorIdNaoEncontrado() throws Exception {
-                when(enderecoService.buscarEnderecoPorId(999L))
-                                .thenReturn(Optional.empty());
+    @Test
+    void buscarPorIdSucesso() throws Exception {
+        when(enderecoService.buscarEnderecoPorId(1L))
+                .thenReturn(Optional.of(endereco));
 
-                mockMvc.perform(get("/endereco/999"))
-                                .andExpect(status().isNotFound());
-        }
+        mockMvc.perform(get("/v1/enderecos/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.cep").value("12345678"));
+    }
 
-        @Test
-        void criarEnderecoSucesso() throws Exception {
-                when(enderecoService.salvarEndereco(any(Endereco.class)))
-                                .thenReturn(endereco);
+    @Test
+    void buscarPorIdNaoEncontrado() throws Exception {
+        when(enderecoService.buscarEnderecoPorId(999L))
+                .thenReturn(Optional.empty());
 
-                String json = """
-                                {
-                                  "cep": "12345678",
-                                  "logradouro": "Rua Teste",
-                                  "numero": "100",
-                                  "bairro": "Centro",
-                                  "cidade": "Cidade",
-                                  "estado": "UF"
-                                }
-                                """;
+        mockMvc.perform(get("/v1/enderecos/999"))
+                .andExpect(status().isNotFound());
+    }
 
-                mockMvc.perform(post("/endereco")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(json))
-                                .andExpect(status().isCreated())
-                                .andExpect(jsonPath("$.cep").value("12345678"));
-        }
+    @Test
+    void criarEnderecoSucesso() throws Exception {
+        when(enderecoService.salvarEndereco(any(Endereco.class)))
+                .thenReturn(endereco);
 
-        @Test
-        void atualizarEnderecoSucesso() throws Exception {
-                Endereco enderecoAtualizado = new Endereco();
-                enderecoAtualizado.setId(1L);
-                enderecoAtualizado.setCep("87654321");
-                enderecoAtualizado.setLogradouro("Rua Atualizada");
-                enderecoAtualizado.setNumero("200");
-                enderecoAtualizado.setBairro("Bairro Novo");
-                enderecoAtualizado.setCidade("Cidade");
-                enderecoAtualizado.setEstado("UF");
+        String json = """
+                {
+                  "cep": "12345678",
+                  "logradouro": "Rua Teste",
+                  "numero": "100",
+                  "bairro": "Centro",
+                  "cidade": "Cidade",
+                  "estado": "UF"
+                }
+                """;
 
-                when(enderecoService.atualizarEndereco(eq(1L), any(Endereco.class)))
-                                .thenReturn(enderecoAtualizado);
+        mockMvc.perform(post("/v1/enderecos")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.cep").value("12345678"));
+    }
 
-                String json = """
-                                {
-                                  "cep": "87654321",
-                                  "logradouro": "Rua Atualizada",
-                                  "numero": "200",
-                                  "bairro": "Bairro Novo",
-                                  "cidade": "Cidade",
-                                  "estado": "UF"
-                                }
-                                """;
+    @Test
+    void atualizarEnderecoSucesso() throws Exception {
+        Endereco enderecoAtualizado = new Endereco();
+        enderecoAtualizado.setId(1L);
+        enderecoAtualizado.setCep("87654321");
+        enderecoAtualizado.setLogradouro("Rua Atualizada");
+        enderecoAtualizado.setNumero("200");
+        enderecoAtualizado.setBairro("Bairro Novo");
+        enderecoAtualizado.setCidade("Cidade");
+        enderecoAtualizado.setEstado("UF");
 
-                mockMvc.perform(put("/endereco/1")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(json))
-                                .andExpect(status().isOk())
-                                .andExpect(jsonPath("$.cep").value("87654321"))
-                                .andExpect(jsonPath("$.logradouro").value("Rua Atualizada"));
-        }
+        when(enderecoService.atualizarEndereco(eq(1L), any(Endereco.class)))
+                .thenReturn(enderecoAtualizado);
 
-        @Test
-        void atualizarEnderecoNaoEncontrado() throws Exception {
-                when(enderecoService.atualizarEndereco(eq(999L), any(Endereco.class)))
-                                .thenThrow(new RuntimeException("Endereço não encontrado"));
+        String json = """
+                {
+                  "cep": "87654321",
+                  "logradouro": "Rua Atualizada",
+                  "numero": "200",
+                  "bairro": "Bairro Novo",
+                  "cidade": "Cidade",
+                  "estado": "UF"
+                }
+                """;
 
-                String json = """
-                                {
-                                  "cep": "87654321",
-                                  "logradouro": "Rua Atualizada",
-                                  "numero": "200",
-                                  "bairro": "Bairro Novo",
-                                  "cidade": "Cidade",
-                                  "estado": "UF"
-                                }
-                                """;
+        mockMvc.perform(put("/v1/enderecos/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.cep").value("87654321"))
+                .andExpect(jsonPath("$.logradouro").value("Rua Atualizada"));
+    }
 
-                mockMvc.perform(put("/endereco/999")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(json))
-                                .andExpect(status().isNotFound());
-        }
+    @Test
+    void atualizarEnderecoNaoEncontrado() throws Exception {
+        when(enderecoService.atualizarEndereco(eq(999L), any(Endereco.class)))
+                .thenThrow(new RuntimeException("Endereço não encontrado"));
 
-        @Test
-        void deletarEnderecoSucesso() throws Exception {
-                Mockito.doNothing().when(enderecoService).deletarEndereco(1L);
+        String json = """
+                {
+                  "cep": "87654321",
+                  "logradouro": "Rua Atualizada",
+                  "numero": "200",
+                  "bairro": "Bairro Novo",
+                  "cidade": "Cidade",
+                  "estado": "UF"
+                }
+                """;
 
-                mockMvc.perform(delete("/endereco/1"))
-                                .andExpect(status().isNoContent());
-        }
+        mockMvc.perform(put("/v1/enderecos/999")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().isNotFound());
+    }
 
-        @Test
-        void deletarEnderecoNaoEncontrado() throws Exception {
-                Mockito.doThrow(new RuntimeException("Endereço não encontrado"))
-                                .when(enderecoService).deletarEndereco(999L);
+    @Test
+    void deletarEnderecoSucesso() throws Exception {
+        Mockito.doNothing().when(enderecoService).deletarEndereco(1L);
 
-                mockMvc.perform(delete("/endereco/999"))
-                                .andExpect(status().isNotFound());
-        }
+        mockMvc.perform(delete("/v1/enderecos/1"))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void deletarEnderecoNaoEncontrado() throws Exception {
+        Mockito.doThrow(new RuntimeException("Endereço não encontrado"))
+                .when(enderecoService).deletarEndereco(999L);
+
+        mockMvc.perform(delete("/v1/enderecos/999"))
+                .andExpect(status().isNotFound());
+    }
 }
