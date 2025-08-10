@@ -1,5 +1,7 @@
 package br.com.tech.challenge.controllers;
 
+import br.com.tech.challenge.controllers.usuario.UsuarioController;
+import br.com.tech.challenge.controllers.usuario.response.UsuarioResponse;
 import br.com.tech.challenge.entities.Usuario;
 import br.com.tech.challenge.services.UsuarioService;
 import org.junit.jupiter.api.Test;
@@ -60,19 +62,18 @@ class UsuarioControllerTest {
     void postUsuarioSucesso() {
         //given
         Usuario usuario = new Usuario();
+        usuario.setId(1L);
         usuario.setNome("Novo Usuario");
         usuario.setEmail("Novo Email");
 
         //when
         when(usuarioService.inserirUsuario(any(Usuario.class)))
-                .thenReturn(String.format("Usuário %s com email: %s, salvo com sucesso!",
-                        usuario.getNome(), usuario.getEmail()));
-        String result = usuarioController.postUsuario(usuario);
+                .thenReturn(usuario);
+        UsuarioResponse result = usuarioController.postUsuario(usuario);
 
         //then
         assertNotNull(result);
-        assertEquals(String.format("Usuário %s com email: %s, salvo com sucesso!",
-                usuario.getNome(), usuario.getEmail()), result);
+        assertEquals(result.id(), usuario.getId());
     }
 
     @Test

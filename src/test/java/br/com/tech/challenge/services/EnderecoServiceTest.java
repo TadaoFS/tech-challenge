@@ -2,7 +2,9 @@ package br.com.tech.challenge.services;
 
 
 import br.com.tech.challenge.entities.Endereco;
+import br.com.tech.challenge.entities.Usuario;
 import br.com.tech.challenge.repositories.EnderecoRepository;
+import br.com.tech.challenge.repositories.UsuarioRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
@@ -20,15 +22,21 @@ class EnderecoServiceTest {
 
     @Mock
     private EnderecoRepository enderecoRepository;
+    @Mock
+    private UsuarioRepository usuarioRepository;
 
     private Endereco endereco;
+    private Usuario usuario;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
+        usuario = new Usuario();
+        usuario.setId(1L);
         endereco = new Endereco();
         endereco.setId(1L);
+        endereco.setUsuario(usuario);
         endereco.setCep("12345678");
         endereco.setLogradouro("Rua Teste");
         endereco.setNumero("100");
@@ -39,6 +47,7 @@ class EnderecoServiceTest {
 
     @Test
     void salvarEnderecoSucesso() {
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
         when(enderecoRepository.save(any(Endereco.class))).thenReturn(endereco);
 
         Endereco salvo = enderecoService.salvarEndereco(endereco);

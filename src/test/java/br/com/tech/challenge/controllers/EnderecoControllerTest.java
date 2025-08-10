@@ -2,6 +2,8 @@ package br.com.tech.challenge.controllers;
 
 import br.com.tech.challenge.config.JwtFilter;
 import br.com.tech.challenge.entities.Endereco;
+import br.com.tech.challenge.entities.Usuario;
+import br.com.tech.challenge.exception.EnderecoNaoEncontrado;
 import br.com.tech.challenge.services.EnderecoService;
 import br.com.tech.challenge.services.TokenService;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,9 +53,12 @@ class EnderecoControllerTest {
     private JwtFilter jwtFilter;
 
     private Endereco endereco;
+    private Usuario usuario;
 
     @BeforeEach
     void setUp() {
+        usuario = new Usuario();
+        usuario.setId(1L);
         endereco = new Endereco();
         endereco.setId(1L);
         endereco.setCep("12345678");
@@ -155,7 +160,7 @@ class EnderecoControllerTest {
     @Test
     void atualizarEnderecoNaoEncontrado() throws Exception {
         when(enderecoService.atualizarEndereco(eq(999L), any(Endereco.class)))
-                .thenThrow(new RuntimeException("Endereço não encontrado"));
+                .thenThrow(new EnderecoNaoEncontrado("Endereço não encontrado"));
 
         String json = """
                 {
@@ -184,7 +189,7 @@ class EnderecoControllerTest {
 
     @Test
     void deletarEnderecoNaoEncontrado() throws Exception {
-        Mockito.doThrow(new RuntimeException("Endereço não encontrado"))
+        Mockito.doThrow(new EnderecoNaoEncontrado("Endereço não encontrado"))
                 .when(enderecoService).deletarEndereco(999L);
 
         mockMvc.perform(delete("/v1/enderecos/999"))
