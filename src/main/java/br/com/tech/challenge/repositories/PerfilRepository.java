@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface PerfilRepository extends JpaRepository<Perfil, Long> {
 
     Optional<Perfil> findByIdUsuario(Usuario idUsuario);
+
+    void deleteByIdUsuario(Usuario idUsuario);
 }

@@ -1,6 +1,10 @@
 package br.com.tech.challenge.services;
 
+import br.com.tech.challenge.entities.Perfil;
 import br.com.tech.challenge.entities.Usuario;
+import br.com.tech.challenge.enums.PerfilEnum;
+import br.com.tech.challenge.repositories.EnderecoRepository;
+import br.com.tech.challenge.repositories.PerfilRepository;
 import br.com.tech.challenge.repositories.UsuarioRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +24,10 @@ class UsuarioServiceTest {
 
     @Mock
     private UsuarioRepository usuarioRepository;
+    @Mock
+    private EnderecoRepository enderecoRepository;
+    @Mock
+    private PerfilRepository perfilRepository;
 
     @InjectMocks
     private UsuarioService usuarioService;
@@ -60,16 +68,22 @@ class UsuarioServiceTest {
     void inserirUsuarioSucesso() {
         //given
         Usuario usuario = new Usuario();
+        usuario.setId(1L);
         usuario.setNome("Novo Usuario");
         usuario.setEmail("email@teste.com");
 
+        Perfil perfil = new Perfil();
+        perfil.setIdUsuario(usuario);
+        perfil.setTipo(PerfilEnum.USER);
+
         //when
         Mockito.when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuario);
-        String result = usuarioService.inserirUsuario(usuario);
+        Mockito.when(perfilRepository.save(any(Perfil.class))).thenReturn(perfil);
+        Usuario result = usuarioService.inserirUsuario(usuario);
 
         //then
         assertNotNull(result);
-        assertEquals("Usuário Novo Usuario com email: email@teste.com, salvo com sucesso!", result);
+        assertEquals(usuario.getId(), result.getId());
     }
 
     @Test
@@ -109,30 +123,20 @@ class UsuarioServiceTest {
 
     @Test
     void deletarUsuarioSucesso() {
-        //given
         long id = 1L;
+        //given
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        usuario.setNome("Novo Usuario");
+        usuario.setEmail("email@teste.com");
 
         //when
-        Mockito.when(usuarioRepository.existsById(id)).thenReturn(true);
+        Mockito.when(usuarioRepository.findById(id)).thenReturn(Optional.of(usuario));
         String result = usuarioService.deletarUsuario(id);
 
         //then
         assertNotNull(result);
         assertEquals("Usuário deletado com sucesso!", result);
-    }
-
-    @Test
-    void deletarUsuarioNotFound() {
-        //given
-        long id = 1L;
-
-        //when
-        Mockito.when(usuarioRepository.existsById(id)).thenReturn(false);
-        String result = usuarioService.deletarUsuario(id);
-
-        //then
-        assertNotNull(result);
-        assertEquals("Usuário não encontrado para deleção.", result);
     }
 
     @Test

@@ -1,20 +1,31 @@
 package br.com.tech.challenge.services;
 
+import br.com.tech.challenge.entities.Perfil;
 import br.com.tech.challenge.entities.Usuario;
+import br.com.tech.challenge.enums.PerfilEnum;
+import br.com.tech.challenge.repositories.EnderecoRepository;
+import br.com.tech.challenge.repositories.PerfilRepository;
 import br.com.tech.challenge.repositories.UsuarioRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class UsuarioService {
 
+    private final EnderecoRepository enderecoRepository;
     private final UsuarioRepository usuarioRepository;
+    private final PerfilRepository perfilRepository;
 
-    public UsuarioService(UsuarioRepository usuarioRepository) {
+    public UsuarioService(EnderecoRepository enderecoRepository, UsuarioRepository usuarioRepository, PerfilRepository perfilRepository) {
+        this.enderecoRepository = enderecoRepository;
         this.usuarioRepository = usuarioRepository;
+        this.perfilRepository = perfilRepository;
     }
 
     @Transactional
@@ -24,9 +35,17 @@ public class UsuarioService {
     }
 
     @Transactional
-    public String inserirUsuario(Usuario usuario) {
-        Usuario usr = usuarioRepository.save(usuario);
-        return String.format("Usuário %s com email: %s, salvo com sucesso!", usr.getNome(), usr.getEmail());
+    public Usuario inserirUsuario(Usuario usuario) {
+        if(Objects.isNull(usuario.getDataAtualizacao()))
+            usuario.setDataAtualizacao(Instant.now().toString());
+        var result = usuarioRepository.save(usuario);
+        var perfil = perfilRepository.save(Perfil.builder()
+                .idUsuario(result)
+                .tipo(PerfilEnum.USER)
+                .build());
+        return Optional.of(perfil)
+                .map(Perfil::getIdUsuario)
+                .orElseThrow(() -> new RuntimeException("Erro ao inserir usuário"));
     }
 
     public String editarUsuario(Long id, Usuario usuario) {
@@ -42,8 +61,11 @@ public class UsuarioService {
 
     @Transactional
     public String deletarUsuario(long id) {
-        if (usuarioRepository.existsById(id)) {
-            usuarioRepository.deleteById(id);
+        var usuario = buscarUsuario(id);
+        if (!Objects.isNull(usuario)) {
+            perfilRepository.deleteByIdUsuario(usuario);
+            enderecoRepository.deleteByUsuario(usuario);
+            usuarioRepository.delete(usuario);
             return "Usuário deletado com sucesso!";
         }
         return "Usuário não encontrado para deleção.";
